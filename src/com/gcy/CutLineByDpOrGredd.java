@@ -7,8 +7,8 @@ public class CutLineByDpOrGredd {
 	public static void main(String[] args) {
 		int length = 65;//2147483647
                           // 2124471432
-		int result = matProductAfterCutting_1(length);
-		BigInteger result2 = matProductAfterCutting_2(length);
+		int result = matProductAfterCutting_1(1000);
+		BigInteger result2 = matProductAfterCutting_2(1000);
 		System.out.println(result);
 		System.out.println(result2);
 	}

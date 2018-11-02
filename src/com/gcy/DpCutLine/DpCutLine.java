@@ -13,8 +13,10 @@ public class DpCutLine {
     public static void main(String args[]){
         CutResult cutResult = cutLine(100);
         System.out.println(cutResult);
-        System.out.println(cutResult.howToCutSummation());
+        System.out.println(cutResult.howToCutSummation());//2066242608
         System.out.println(cutResult.howToCutProduction());
+        System.out.println(cutLine(1).getResultMax()*cutLine(59).getResultMax());
+        System.out.println(cutLine(5).getResultMax()*cutLine(55).getResultMax());
 
 
     }
@@ -52,7 +54,9 @@ public class DpCutLine {
                        System.arraycopy(howToCutI_J,0,tempHowToCut,howToCutJ.length,howToCutI_J.length);
                    }
                 }
-                cutResultMap.put(i,new CutResult(tempHowToCut,tempMax));
+                CutResult cutResult = new CutResult(tempHowToCut,tempMax);
+                cutResultMap.put(i, cutResult);
+                System.out.println(i+":"+cutResult);
             }
 
         }
