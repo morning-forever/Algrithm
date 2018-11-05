@@ -9,12 +9,12 @@ public class CutResult {
 
     private int[] howToCut;
 
-    private int resultMax;
+    private long resultMax;
 
     public CutResult() {
     }
 
-    public CutResult(int[] howToCut, int resultMax) {
+    public CutResult(int[] howToCut, long resultMax) {
         this.howToCut = howToCut;
         this.resultMax = resultMax;
     }
@@ -27,11 +27,11 @@ public class CutResult {
         this.howToCut = howToCut;
     }
 
-    public int getResultMax() {
+    public long getResultMax() {
         return resultMax;
     }
 
-    public void setResultMax(int resultMax) {
+    public void setResultMax(long resultMax) {
         this.resultMax = resultMax;
     }
 
@@ -39,7 +39,7 @@ public class CutResult {
      * 怎样切割求和。——反过来求和，以验证切割的准确性。
      * @return
      */
-    public int howToCutSummation(){
+    public long howToCutSummation(){
 
         int sum = 0;
         for(int i : this.howToCut){
@@ -48,7 +48,7 @@ public class CutResult {
         return sum;
     }
 
-    public int howToCutProduction(){
+    public long howToCutProduction(){
         int production = 1;
         for(int i : this.howToCut){
             production *= i;
