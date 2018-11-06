@@ -15,9 +15,11 @@ public class GrubGold {
 
 
     public static void main(String args[]){
-        if(testOr1() || testOr2()){
+       /* if(testOr1() || testOr2()){
             System.out.println("hello");
-        }
+        }*/
+
+        println(Math.pow(2,3));
     }
 
     public static boolean testOr1(){
@@ -94,8 +96,16 @@ public class GrubGold {
          *
          * 先选定一座要挖的。
          */
-        GoldOre[] resultGoldOres = new GoldOre[1];
-        resultGoldOres[0] = goldOres[0];
+        /*GoldOre[] resultGoldOres = new GoldOre[1];
+        resultGoldOres[0] = goldOres[0];*/
+        for(int i=0;i<goldOres.length;i++){
+
+        }
+
+        /**
+         * 写一个算法，传一个数组，列出这个数组的所有排列组合情况。
+         *
+         */
 
 
 
@@ -104,6 +114,29 @@ public class GrubGold {
 
     }
 
+    /**
+     * 数组排列组合。传入一个数组，返回这个数组的排列组合。数组元素要么选，要么不选。
+     * @param objects
+     * @return
+     */
+    private static Object[][] permutationAndCombinationOfArray(Object[] objects){
+
+        int resultLength = (int)Math.pow(2,objects.length);
+
+        Object[][]  result = new Object[resultLength][];
+
+        for(int i = 0 ; i < result.length; i++){
+            result[i] = objects;
+        }
+
+        for(int i= 0 ; i < objects.length ; i++ ){
+
+        }
+
+
+
+        return null;
+    }
     private static void println(Object object){
         System.out.println(object);
     }
@@ -140,5 +173,7 @@ public class GrubGold {
 
 
     }
+
+
 
 }
