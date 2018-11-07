@@ -1,5 +1,6 @@
 package com.gcy.grub.gold;
 
+
 import java.util.Arrays;
 
 /**
@@ -11,19 +12,41 @@ import java.util.Arrays;
  *
  * 五座金矿——1：500金/5人，2：200金/3人，3：300金/4人，4:350金/3人，5:400金/5人
  *
- *
+ *PAXOS
  */
 public class GrubGold {
 
 
-    public static void main(String args[]){
-       /* if(testOr1() || testOr2()){
+    public static void main(String args[]) {
+        /*if(testOr1() || testOr2()){
             System.out.println("hello");
         }*/
 
+
+
         // println(Math.pow(2,3));
         //testArrayExtends();
-        testPermutationAndCombinationOfArray();
+
+           // Method method = GrubGold.class.getDeclaredMethod("testOr1",null);
+
+           // System.out.println(method.getName());
+
+        /*Integer[][] hello = (Integer[][]) new Object[1][1];//Exception in thread "main" java.lang.ClassCastException: [[Ljava.lang.Object; cannot be cast to [[Ljava.lang.Integer;
+        hello[0] = new Integer[]{0};
+
+
+        System.out.println(hello[0][0]);
+
+
+        Object obj = new Integer(1);
+        Integer integer = (Integer) obj;
+        System.out.println(integer);*/
+
+       /* Object[] objects = new Integer[]{0};
+        Integer[] integers = (Integer[]) objects;
+        System.out.println(integers[0]);*/
+
+       testPermutationAndCombinationOfArray();
     }
 
     public static boolean testOr1(){
@@ -44,14 +67,21 @@ public class GrubGold {
 
     public static void testPermutationAndCombinationOfArray(){
         Integer[] arr = new Integer[]{1,2,3,4};
-        Object[][] resultOfPermutationAndCombination = permutationAndCombinationOfArray(arr);
-        for(int i = 0; i < resultOfPermutationAndCombination.length;i++){
+        Integer[][] results = new Integer[1][1];
+        //Object[][] resultOfPermutationAndCombination = permutationAndCombinationOfArrayWithoutGeneric(arr);
+        results = permutationAndCombinationOfArray(arr,results);
+        /*for(int i = 0; i < resultOfPermutationAndCombination.length;i++){
             for(int j = 0 ;j < resultOfPermutationAndCombination[i].length;j++){
-                System.out.print(resultOfPermutationAndCombination[i][j]+",");
+                Integer element = (Integer)resultOfPermutationAndCombination[i][j];
+                //System.out.print(resultOfPermutationAndCombination[i][j]+",");
+                System.out.print(element+",");
             }
             System.out.println();
+        }*/
+        for(int i = 0 ; i < results.length ; i++){
+            println(Arrays.toString(results[i]));
         }
-        println(Arrays.toString(resultOfPermutationAndCombination));
+        println(Arrays.toString(results));
     }
 
     /**
@@ -127,22 +157,35 @@ public class GrubGold {
 
         /**
          * 写一个算法，传一个数组，列出这个数组的所有排列组合情况。
-         *
          */
-
-
-
         return null;
 
 
     }
 
     /**
-     * 数组排列组合。传入一个数组，返回这个数组的排列组合。数组元素要么选，要么不选。
-     * @param objects
-     * @return
+     * 数组组合。传入一个数组，返回这个数组的所有组合情况组合。数组元素要么选，要么不选。
+     *
+     * 这道题目的真正题意是：
+     * 给定一个数组，要求用这个数组中的元素进行组合，返回所有的组合情况。
+     * 说明：每一种组合可以使用这个数组中的1个或多个元素，但不能使用这个数组中包含的元素以外的任何对象或值。
+     *
+     * 这个方法没有使用泛型。下面举个例子来说明没有使用泛型坏处：
+     * 当我传入一个Integer[]时，只能用Object[][] 类型的引用来接收结果值。如果使用Integer[][]，然后在方法调用后进行强制转换,运行的时候就会报错：
+     * Exception in thread "main" java.lang.ClassCastException: [[Ljava.lang.Object; cannot be cast to [[Ljava.lang.Integer; Object 数组不能强制转换成其他数组。
+     *      * 但是为什么在泛型方法里可以T[][] tempResults = (T[][])new Object[1][1];? 暂且不管，后续追究。
+     *
+     * 其实，使用泛型的好处根本不存在，最后还是会报
+     * Exception in thread "main" java.lang.ClassCastException: [[Ljava.lang.Object; cannot be cast to [[Ljava.lang.Integer; Object 这个异常。
+     *
+     *最后总结：
+     * 你可以将指向Integer对象的Object类型的引用强转成Integer类型的引用，但是你不能将指向Integer数组的Object数组类型的引用强转成Integer数组类型的引用。---错了，妈的。
+     *
+     * 是编译期后，泛型就被擦除了。我在方法的实现里面建的就是Object类型的数组，当然不能转成Integer类型的数组了。
+     * @param objects 给定的数组
+     * @return 所有组合的情况。一定是一个二维数组，外层数组的长度表示会出现多少种情况，外层数组的每一个元素表示可能出现的每一种组合情况。
      */
-    private static Object[][] permutationAndCombinationOfArray(Object[] objects){
+    private static Object[][] permutationAndCombinationOfArrayWithoutGeneric(Object[] objects){
 
 
         int arrayLength = objects.length;
@@ -191,17 +234,91 @@ public class GrubGold {
             //新的结果的长度为以前的数组的长度*2+1
             tempResults = Arrays.copyOf(tempResults,tempResults.length*2+1);
 
+            //将新的元素放进新的结果中
             System.arraycopy(tempResultsNewElements,0,tempResults,lastTempResultsLength,tempResultsNewElements.length);
 
 
         }
-
-
-
-
-
-      return tempResults;
+        return tempResults;
     }
+
+
+    /**
+     *
+     * @param ts
+     * @param results  结果。必须有且只有一个元素，元素中有且只有一个元素。
+     * @param <T> 数组元素的类型。
+     * @return
+     */
+    private static <T> T[][] permutationAndCombinationOfArray(T[] ts,T[][] results){
+
+
+        if(results.length != 1){
+            println("传进来的结果必须只有一个元素");
+            return null;
+        }else if(results[0].length != 1){
+            println("传进来的结果元素中必须只有一个元素");
+            return null;
+        }
+
+
+        int arrayLength = ts.length;
+
+        results[0][0] = ts[0];
+
+        if(arrayLength == 1 ){
+            return results;
+        }
+
+
+
+        //为什么从i=1开始？答：我要算出长度为objects.length的数组所有可能的组合，怎么算呢？
+        //我只要得到长度为1的数组所有可能的组合，就能得到长度为2的数组所有可能的组合
+        //只要得到长度为2的数组所有可能的组合，就能得到长度为3的数组所有可能的组合
+        //...
+        for(int i = 1; i < ts.length;i++){
+
+            //Object[][] tempResultsNewElements = new Object[tempResults.length+1][];
+            //换个方案
+            T[][] tempResultsNewElements = Arrays.copyOf(results,results.length+1);
+
+            //初始化新的元素（请注意：每一个元素是一个数组）
+            //最后一个元素不在循环体中初始化，因为它不由之前的数组中的元素变化而得，它是一个新的数组,数组的元素只有一个那就是objects[i]
+            for(int j = 0 ; j < tempResultsNewElements.length-1 ; j++){
+
+                //每一个新的元素由之前的数组中的元素经过一定的变化得来——将以前的数组中的元素加一个元素，加的元素恰好是objects[i]
+
+                //由上一句话：每一个新的元素的长度在以前的基础上+1
+                /*//（这里必须新建一个Object数组，因为如果）被换方案
+                tempResultsNewElements[j] = new Object[tempResults[j].length+1];
+                //将之前的数组中的元素复制到新的数组中（深复制）
+                System.arraycopy(tempResults[j],0,tempResultsNewElements[j],0,tempResults[j].length);*/
+
+                //换方案，这里可以不用上面那种写法，可以用Arrays.copyOf来扩展数组。
+                tempResultsNewElements[j] = Arrays.copyOf(results[j],results[j].length+1);
+
+                //初始化新元素的最后一个元素
+                tempResultsNewElements[j][results[j].length] = ts[i];
+            }
+
+           // tempResultsNewElements[tempResultsNewElements.length-1] =(T[]) new Object[]{ts[i]};
+
+              T[] newElement = Arrays.copyOf(results[0],1);
+              newElement[0] = ts[i];
+
+            tempResultsNewElements[tempResultsNewElements.length-1] = newElement;
+            //先记下上一个结果数组的长度。
+            int lastTempResultsLength = results.length;
+
+            //新的结果的长度为以前的数组的长度*2+1
+            results = Arrays.copyOf(results,results.length*2+1);
+
+            //将新的元素放进新的结果中
+            System.arraycopy(tempResultsNewElements,0,results,lastTempResultsLength,tempResultsNewElements.length);
+        }
+        return results;
+    }
+
     private static void println(Object object){
         System.out.println(object);
     }
