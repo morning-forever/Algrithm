@@ -1,5 +1,7 @@
 package com.gcy.grub.gold;
 
+import java.util.Arrays;
+
 /**
  * 题目：
  * 有一个国家发现了5座金矿，每座金矿的黄金储量不同，需要参与挖掘的工人数量也不同。参与挖掘的工人总数是10。
@@ -19,7 +21,9 @@ public class GrubGold {
             System.out.println("hello");
         }*/
 
-        println(Math.pow(2,3));
+        // println(Math.pow(2,3));
+        //testArrayExtends();
+        testPermutationAndCombinationOfArray();
     }
 
     public static boolean testOr1(){
@@ -29,6 +33,25 @@ public class GrubGold {
     public static boolean testOr2(){
         System.out.println("*********testOr2*********");
         return true;
+    }
+
+    public static void testArrayExtends(){
+        int[] arr = new int[]{1,2,3,4};
+        int[] arrAfterExtend = Arrays.copyOf(arr,arr.length+2);
+        println(Arrays.toString(arr));
+        println(Arrays.toString(arrAfterExtend));
+    }
+
+    public static void testPermutationAndCombinationOfArray(){
+        Integer[] arr = new Integer[]{1,2,3,4};
+        Object[][] resultOfPermutationAndCombination = permutationAndCombinationOfArray(arr);
+        for(int i = 0; i < resultOfPermutationAndCombination.length;i++){
+            for(int j = 0 ;j < resultOfPermutationAndCombination[i].length;j++){
+                System.out.print(resultOfPermutationAndCombination[i][j]+",");
+            }
+            System.out.println();
+        }
+        println(Arrays.toString(resultOfPermutationAndCombination));
     }
 
     /**
@@ -121,21 +144,63 @@ public class GrubGold {
      */
     private static Object[][] permutationAndCombinationOfArray(Object[] objects){
 
-        int resultLength = (int)Math.pow(2,objects.length);
 
-        Object[][]  result = new Object[resultLength][];
+        int arrayLength = objects.length;
 
-        for(int i = 0 ; i < result.length; i++){
-            result[i] = objects;
+
+        if(arrayLength == 1 ){
+            Object[][] results = new Object[1][1];
+            results[0] = objects;
+            return results;
         }
 
-        for(int i= 0 ; i < objects.length ; i++ ){
+        Object[][] tempResults = new Object[1][1];
+        tempResults[0] = new Object[]{1};
+
+        for(int i = 1; i < objects.length;i++){
+
+
+            //Object[][] tempResultsNewElements = new Object[tempResults.length+1][];
+            //换个方案
+            Object[][] tempResultsNewElements = Arrays.copyOf(tempResults,tempResults.length+1);
+
+            //初始化新的元素（请注意：每一个元素是一个数组）
+            //最后一个元素不在循环体中初始化，因为它不由之前的数组中的元素变化而得，它是一个新的数组,数组的元素只有一个那就是objects[i]
+            for(int j = 0 ; j < tempResultsNewElements.length-1 ; j++){
+
+                //每一个新的元素由之前的数组中的元素经过一定的变化得来——将以前的数组中的元素加一个元素，加的元素恰好是objects[i]
+
+                //由上一句话：每一个新的元素的长度在以前的基础上+1
+                /*//（这里必须新建一个Object数组，因为如果）被换方案
+                tempResultsNewElements[j] = new Object[tempResults[j].length+1];
+                //将之前的数组中的元素复制到新的数组中（深复制）
+                System.arraycopy(tempResults[j],0,tempResultsNewElements[j],0,tempResults[j].length);*/
+
+                //换方案，这里可以不用上面那种写法，可以用Arrays.copyOf来扩展数组。
+                tempResultsNewElements[j] = Arrays.copyOf(tempResults[j],tempResults[j].length+1);
+
+                //初始化新元素的最后一个元素
+                tempResultsNewElements[j][tempResults[j].length] = objects[i];
+            }
+
+            tempResultsNewElements[tempResultsNewElements.length-1] = new Object[]{objects[i]};
+
+            //先记下上一个结果数组的长度。
+            int lastTempResultsLength = tempResults.length;
+
+            //新的结果的长度为以前的数组的长度*2+1
+            tempResults = Arrays.copyOf(tempResults,tempResults.length*2+1);
+
+            System.arraycopy(tempResultsNewElements,0,tempResults,lastTempResultsLength,tempResultsNewElements.length);
+
 
         }
 
 
 
-        return null;
+
+
+      return tempResults;
     }
     private static void println(Object object){
         System.out.println(object);
