@@ -1,6 +1,7 @@
 package com.gcy.grub.gold;
 
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -68,20 +69,13 @@ public class GrubGold {
     public static void testPermutationAndCombinationOfArray(){
         Integer[] arr = new Integer[]{1,2,3,4};
         Integer[][] results = new Integer[1][1];
-        //Object[][] resultOfPermutationAndCombination = permutationAndCombinationOfArrayWithoutGeneric(arr);
-        results = permutationAndCombinationOfArray(arr,results);
-        /*for(int i = 0; i < resultOfPermutationAndCombination.length;i++){
-            for(int j = 0 ;j < resultOfPermutationAndCombination[i].length;j++){
-                Integer element = (Integer)resultOfPermutationAndCombination[i][j];
-                //System.out.print(resultOfPermutationAndCombination[i][j]+",");
-                System.out.print(element+",");
-            }
-            System.out.println();
-        }*/
+
+        results = permutationAndCombinationOfArray(arr);
+
         for(int i = 0 ; i < results.length ; i++){
             println(Arrays.toString(results[i]));
         }
-        println(Arrays.toString(results));
+        println(Arrays.toString(results));//Arrays.toString()方法只能打出一维数组。
     }
 
     /**
@@ -187,7 +181,6 @@ public class GrubGold {
      */
     private static Object[][] permutationAndCombinationOfArrayWithoutGeneric(Object[] objects){
 
-
         int arrayLength = objects.length;
 
 
@@ -202,7 +195,6 @@ public class GrubGold {
 
         for(int i = 1; i < objects.length;i++){
 
-
             //Object[][] tempResultsNewElements = new Object[tempResults.length+1][];
             //换个方案
             Object[][] tempResultsNewElements = Arrays.copyOf(tempResults,tempResults.length+1);
@@ -212,14 +204,6 @@ public class GrubGold {
             for(int j = 0 ; j < tempResultsNewElements.length-1 ; j++){
 
                 //每一个新的元素由之前的数组中的元素经过一定的变化得来——将以前的数组中的元素加一个元素，加的元素恰好是objects[i]
-
-                //由上一句话：每一个新的元素的长度在以前的基础上+1
-                /*//（这里必须新建一个Object数组，因为如果）被换方案
-                tempResultsNewElements[j] = new Object[tempResults[j].length+1];
-                //将之前的数组中的元素复制到新的数组中（深复制）
-                System.arraycopy(tempResults[j],0,tempResultsNewElements[j],0,tempResults[j].length);*/
-
-                //换方案，这里可以不用上面那种写法，可以用Arrays.copyOf来扩展数组。
                 tempResultsNewElements[j] = Arrays.copyOf(tempResults[j],tempResults[j].length+1);
 
                 //初始化新元素的最后一个元素
@@ -252,7 +236,7 @@ public class GrubGold {
      */
     private static <T> T[][] permutationAndCombinationOfArray(T[] ts,T[][] results){
 
-
+       //T[][] hh = (T[][]) Array.newInstance(results.getClass().getComponentType(), 3); 这里有一个比较重要的。
         if(results.length != 1){
             println("传进来的结果必须只有一个元素");
             return null;
@@ -287,13 +271,6 @@ public class GrubGold {
             for(int j = 0 ; j < tempResultsNewElements.length-1 ; j++){
 
                 //每一个新的元素由之前的数组中的元素经过一定的变化得来——将以前的数组中的元素加一个元素，加的元素恰好是objects[i]
-
-                //由上一句话：每一个新的元素的长度在以前的基础上+1
-                /*//（这里必须新建一个Object数组，因为如果）被换方案
-                tempResultsNewElements[j] = new Object[tempResults[j].length+1];
-                //将之前的数组中的元素复制到新的数组中（深复制）
-                System.arraycopy(tempResults[j],0,tempResultsNewElements[j],0,tempResults[j].length);*/
-
                 //换方案，这里可以不用上面那种写法，可以用Arrays.copyOf来扩展数组。
                 tempResultsNewElements[j] = Arrays.copyOf(results[j],results[j].length+1);
 
@@ -316,7 +293,96 @@ public class GrubGold {
             //将新的元素放进新的结果中
             System.arraycopy(tempResultsNewElements,0,results,lastTempResultsLength,tempResultsNewElements.length);
         }
+
+        //这里的results已经指向了Arrays.copyOf() 返回的新数组，如果不返回，调用此方法的地方直接使用传入此方法的第二个参数，是得不到这个新的数组的。
         return results;
+
+        //记：
+        // 关于引用传递与值传递。java中，只有传入基本类型的数据是值传递，如果传入了一个数组或对象，是引用传递，没错！
+        // 但是如果没有修改传过来的引用所指向的数组或对象（例如：没有使用arr[i][j] = XXX 或 没有使用obj.setXXX(XXX)），
+        // 那么调用此方法的地方的那个原始引用所指向的对象是不会改变的。
+
+        //关键的：其实调用方法的时候，不管是传入了基本类型还是数组或对象，都是传入了原来的值的一个副本，要么是值副本，要么是引用副本。
+        //所以传入数组或对象时，其实内部是创建了一个新的引用，这个新的引用是传入方法时所使用的那个引用的副本，
+        //新的引用和传入方法时所使用的引用指向的是同一个数组或对象。但是在方法的实现体内，有可能会将这个新的引用指向别的数组或对象。
+
+    }
+
+
+    /**
+     *
+     * @param ts
+     * @param <T> 数组元素的类型。
+     * @return
+     */
+    private static <T> T[][] permutationAndCombinationOfArray(T[] ts){
+
+        //T[][] hh = (T[][]) Array.newInstance(results.getClass().getComponentType(), 3); 这里有一个比较重要的。
+        T[][] results = (T[][])Array.newInstance(ts.getClass(),1);
+        results[0] = (T[]) Array.newInstance(ts.getClass().getComponentType(),1);
+
+        //results[0] = (T[])Array.newInstance(ts.getClass().getComponentType(),1);
+        results[0][0] = ts[0];
+        int arrayLength = ts.length;
+
+        results[0][0] = ts[0];
+
+        if(arrayLength == 1 ){
+            return results;
+        }
+
+
+
+        //为什么从i=1开始？答：我要算出长度为objects.length的数组所有可能的组合，怎么算呢？
+        //我只要得到长度为1的数组所有可能的组合，就能得到长度为2的数组所有可能的组合
+        //只要得到长度为2的数组所有可能的组合，就能得到长度为3的数组所有可能的组合
+        //...
+        for(int i = 1; i < ts.length;i++){
+
+            //Object[][] tempResultsNewElements = new Object[tempResults.length+1][];
+            //换个方案
+            T[][] tempResultsNewElements = Arrays.copyOf(results,results.length+1);
+
+            //初始化新的元素（请注意：每一个元素是一个数组）
+            //最后一个元素不在循环体中初始化，因为它不由之前的数组中的元素变化而得，它是一个新的数组,数组的元素只有一个那就是objects[i]
+            for(int j = 0 ; j < tempResultsNewElements.length-1 ; j++){
+
+                //每一个新的元素由之前的数组中的元素经过一定的变化得来——将以前的数组中的元素加一个元素，加的元素恰好是objects[i]
+                //换方案，这里可以不用上面那种写法，可以用Arrays.copyOf来扩展数组。
+                tempResultsNewElements[j] = Arrays.copyOf(results[j],results[j].length+1);
+
+                //初始化新元素的最后一个元素
+                tempResultsNewElements[j][results[j].length] = ts[i];
+            }
+
+            // tempResultsNewElements[tempResultsNewElements.length-1] =(T[]) new Object[]{ts[i]};
+
+            T[] newElement = Arrays.copyOf(results[0],1);
+            newElement[0] = ts[i];
+
+            tempResultsNewElements[tempResultsNewElements.length-1] = newElement;
+            //先记下上一个结果数组的长度。
+            int lastTempResultsLength = results.length;
+
+            //新的结果的长度为以前的数组的长度*2+1
+            results = Arrays.copyOf(results,results.length*2+1);
+
+            //将新的元素放进新的结果中
+            System.arraycopy(tempResultsNewElements,0,results,lastTempResultsLength,tempResultsNewElements.length);
+        }
+
+        //这里的results已经指向了Arrays.copyOf() 返回的新数组，如果不返回，调用此方法的地方直接使用传入此方法的第二个参数，是得不到这个新的数组的。
+        return results;
+
+        //记：
+        // 关于引用传递与值传递。java中，只有传入基本类型的数据是值传递，如果传入了一个数组或对象，是引用传递，没错！
+        // 但是如果没有修改传过来的引用所指向的数组或对象（例如：没有使用arr[i][j] = XXX 或 没有使用obj.setXXX(XXX)），
+        // 那么调用此方法的地方的那个原始引用所指向的对象是不会改变的。
+
+        //关键的：其实调用方法的时候，不管是传入了基本类型还是数组或对象，都是传入了原来的值的一个副本，要么是值副本，要么是引用副本。
+        //所以传入数组或对象时，其实内部是创建了一个新的引用，这个新的引用是传入方法时所使用的那个引用的副本，
+        //新的引用和传入方法时所使用的引用指向的是同一个数组或对象。但是在方法的实现体内，有可能会将这个新的引用指向别的数组或对象。
+
     }
 
     private static void println(Object object){
