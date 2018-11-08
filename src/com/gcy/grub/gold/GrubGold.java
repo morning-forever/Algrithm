@@ -317,11 +317,11 @@ public class GrubGold {
      */
     private static <T> T[][] permutationAndCombinationOfArray(T[] ts){
 
-        //T[][] hh = (T[][]) Array.newInstance(results.getClass().getComponentType(), 3); 这里有一个比较重要的。
         T[][] results = (T[][])Array.newInstance(ts.getClass(),1);
+
+        //不进行下面的初始化，在给results的第一个元素的第一个元素赋值的时候会包NullPointerException。
         results[0] = (T[]) Array.newInstance(ts.getClass().getComponentType(),1);
 
-        //results[0] = (T[])Array.newInstance(ts.getClass().getComponentType(),1);
         results[0][0] = ts[0];
         int arrayLength = ts.length;
 
@@ -333,31 +333,43 @@ public class GrubGold {
 
 
 
-        //为什么从i=1开始？答：我要算出长度为objects.length的数组所有可能的组合，怎么算呢？
-        //我只要得到长度为1的数组所有可能的组合，就能得到长度为2的数组所有可能的组合
-        //只要得到长度为2的数组所有可能的组合，就能得到长度为3的数组所有可能的组合
-        //...
+        // 为什么从i=1开始？
+        // 答：我要算出，用给定数组中的元素，进行组合，“所能产生的所有可能组合”，怎么算呢？
+        // 分析：我先算出，用给定数组中的第一个元素，进行组合，“所能产生的所有可能组合”，这个很好算吧！其实就只有一种组合，那就是第一个元素。
+        // 我得到用第一个元素进行组合所能产生的所有可能组合之后，我很容易得到用第一、二个元素进行组合所能产生的所有可能组合。可以这么想问题：
+        // 我现在无非是加了一个可以拿来进行组合的元素——第二个元素，新加的这个元素在组合时，有两种选择，要么要，要么不要，
+        // 如果不要，那就能产生加进来之前的那些所有可能组合。如果要，那就会产生一些新的组合，这些新的组合是，
+        // 之前的那些所有组合中，每一个组合再加上加进来的这个元素所产生的所有新组合 + 这个元素自己所组成的组合。
+        // 用数学语言来描述试试：
+        // 假设我有一个数组A,数组中的元素是A[0],A[1],A[2],A[3],A[4],A[5],...,A[n],
+        // 求：从数组A的元素——A[0]到A[n]中，选取任意个（>1个）元素组成新的数组B,列出所有可能的B，用二维数组BS表示。
+        // 分析：先把问题简单化，假设数组A中只有一个元素A[0],那么所有可能的B只有一个，就是A[0]自己作为一个元素组成的数组。BS的是长度为1的二维数组。就是BS[0] = [A[0]] 。
+        // 假设我现在再往数组A中再加一个元素A[1]，也就是说现在数组A有两个元素了，那么可以选取用来组成新的数组的元素多了一个A[1],
+        // 这时，在组成新的数组B时，A[1]要么选取，要么不选取。如果选取，那么就会产生结果[A[0],A[1]] 和 [A[1]],如果不选取就会产生结果[A[0]],这正是数组A只有一个元素时所能产生的所有结果。
+        // 算下去，会发现，每多加一个可选取的元素，就会新产生以前的结果+1种结果。
+        // 我上面已经初始化好只用给定数组的第一个元素进行组合得到的结果，所以我要从第二个元素开始，将第二个加入到组合中。
+        //而第二个元素的index是1.所以从i=1
         for(int i = 1; i < ts.length;i++){
 
             //Object[][] tempResultsNewElements = new Object[tempResults.length+1][];
             //换个方案
+            //新添加的组合情况。
             T[][] tempResultsNewElements = Arrays.copyOf(results,results.length+1);
 
             //初始化新的元素（请注意：每一个元素是一个数组）
-            //最后一个元素不在循环体中初始化，因为它不由之前的数组中的元素变化而得，它是一个新的数组,数组的元素只有一个那就是objects[i]
+            //最后一个元素不在循环体中初始化，因为它不由之前的数组中的元素变化而得，它是一个新的数组,数组的元素只有一个那就是ts[i]
             for(int j = 0 ; j < tempResultsNewElements.length-1 ; j++){
 
-                //每一个新的元素由之前的数组中的元素经过一定的变化得来——将以前的数组中的元素加一个元素，加的元素恰好是objects[i]
-                //换方案，这里可以不用上面那种写法，可以用Arrays.copyOf来扩展数组。
+                //每一个新的元素由之前的数组中的元素经过一定的变化得来——将以前的数组中的元素加一个元素，加的元素恰好是ts[i]
                 tempResultsNewElements[j] = Arrays.copyOf(results[j],results[j].length+1);
 
-                //初始化新元素的最后一个元素
-                tempResultsNewElements[j][results[j].length] = ts[i];
+                //加一个元素
+                tempResultsNewElements[j][tempResultsNewElements[j].length-1] = ts[i];
             }
 
-            // tempResultsNewElements[tempResultsNewElements.length-1] =(T[]) new Object[]{ts[i]};
 
-            T[] newElement = Arrays.copyOf(results[0],1);
+            T[] newElement = (T[])Array.newInstance(ts.getClass().getComponentType(),1);
+
             newElement[0] = ts[i];
 
             tempResultsNewElements[tempResultsNewElements.length-1] = newElement;
