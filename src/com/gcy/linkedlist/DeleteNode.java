@@ -14,6 +14,7 @@ import java.util.HashMap;
  * 解决决以下两大类问题
  * 寻找/删除第 K 个结点
  * 有关链表环问题的相关解法
+ * 试一下能提交不？git，台式机，新电脑
  * */
 public class DeleteNode {
 
