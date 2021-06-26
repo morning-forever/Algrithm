@@ -13,7 +13,7 @@ import java.util.Arrays;
  *
  * 五座金矿——1：500金/5人，2：200金/3人，3：300金/4人，4:350金/3人，5:400金/5人
  *
- *PAXOS
+ *
  */
 public class GrubGold {
 
