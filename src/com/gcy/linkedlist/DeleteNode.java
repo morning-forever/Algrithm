@@ -1,6 +1,7 @@
 package com.gcy.linkedlist;
 
-import java.util.HashMap;
+import com.gcy.linkedlist.base.LinkedList;
+import com.gcy.linkedlist.base.Node;
 
 /**
  * 给定一个链表的头指针和一个节点指针，定义一个函数在O(1)内删除这个节点
@@ -28,14 +29,14 @@ public class DeleteNode {
 
         linkedList.print();
 
-         //删除指定节点（如：删除只为2的节点）
-        /*Node tmp = linkedList.head.next;
+         //删除指定节点（如：删除指为2的节点）
+       /* Node tmp = linkedList.head.next;
         while( tmp.data != 2 ){
             tmp = tmp.next;
         }
         linkedList.deleteNode(tmp);*/
         //递归翻转链表
-      //  Node node = invertLinkedList(linkedList.head.next);
+      Node node = invertLinkedList(linkedList.head.next);
       //linkedList.head.next = node;
         //迭代翻转链表
         //iterationInvertLinkedList(linkedList);
@@ -45,28 +46,38 @@ public class DeleteNode {
         //invertLinkedList(linkedList,3);
 
         // 每k个1组进行逆序翻转
-       // reverseInverseLinkedList(linkedList,3);
+       // reverseInverseLinkedList(linkedList,);
 
         //寻找中间节点
         //Node middleNode = findMiddleNode(linkedList);
         //System.out.println("中间节点："+middleNode);
 
         //寻找倒数第k个节点
-        //Node kth= findKthToTail(linkedList,8);
+        //Node kth= findKthToTail(linkedList,3);
         //System.out.println("倒数第3个节点："+kth);
+
+
 
         //向右旋转K个位置
         //reverseKthToTail(2, linkedList);
         // 删除第k个节点
-        //deleteKthToTail(linkedList,2);
+       // deleteKthToTail(linkedList,2);
 
 
         //linkedList.print();
 
         // 两个链表是否有焦点
-        Node node = isIntersecting(linkedList, linkedList);
+        //Node node = isIntersecting(linkedList, linkedList);
 
-        System.out.println("相交点："+node.data);
+        //System.out.println("相交点："+node.data);
+
+
+        //删除倒数第3个节点
+       // delKthToTail(linkedList,3);
+        linkedList.print();
+
+
+
 
     }
 
@@ -412,55 +423,37 @@ public class DeleteNode {
 
         return null;
     }
-}
 
-    class LinkedList{
-    int length = 0;
-    Node head = new Node(0);
 
-    public void addNode(int data){
-        Node temp = head;
-        while(temp.next != null){
-            temp = temp.next;
+    /**
+     * 删除倒数第k个节点
+     */
+    private static void delKthToTail(LinkedList linkedList, int k){
+
+        System.out.println(k);
+        Node fast = linkedList.head;
+        Node slow = linkedList.head;
+
+        int step = 0;
+
+        while(fast.next!=null){
+
+            fast = fast.next;
+            if(step < k-1){
+                step++;
+            }else{
+                slow = slow.next;
+            }
+
+            if(fast.next == null){
+                slow.data = slow.next.data;
+                slow.next = slow.next.next;
+            }
+
         }
-        temp.next = new Node(data);
-    }
 
-    public void headInsert(int data){
-        Node nodeNew = new Node(data);
-        nodeNew.next = head.next;
-        head.next = nodeNew;
-    }
-
-    public void print(){
-        System.out.print("head");
-        Node node = head.next;
-        while(node != null){
-            System.out.print("-->"+node.data);
-            node = node.next;
-        }
-        System.out.println();
-    }
-
-    public void deleteNode(Node node){
-        //把要删除节点的下一个节点的值赋给要删除的节点，则问题转化为“删除下一个节点”
-        node.data = node.next.data;
-        //删除下一个节点
-        Node delNode = node.next;
-        node.next = delNode.next;
-        delNode.next = null;
     }
 }
 
-class Node{
-    int data;
-    Node next = null;
-    public Node(int data){
-        this.data = data;
-    }
 
-    @Override
-    public String toString() {
-        return String.valueOf(data);
-    }
-}
+
